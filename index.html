@@ -100,6 +100,110 @@
 
     .nav-links a:hover { color: var(--accent); }
 
+    /* =========================
+       Mobile Hamburger Menu
+       ========================= */
+    .nav-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid rgba(197, 225, 221, 0.95);
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--text-sub);
+      border-radius: 2px;
+      position: relative;
+    }
+    .nav-toggle span + span { margin-top: 4px; }
+
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+      z-index: 40;
+    }
+
+    .nav-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(84vw, 360px);
+      background: rgba(244, 251, 250, 0.98);
+      backdrop-filter: blur(16px);
+      border-left: 1px solid rgba(197, 225, 221, 0.9);
+      transform: translateX(105%);
+      transition: transform 220ms ease;
+      z-index: 50;
+      padding: 14px 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 4px 10px;
+      border-bottom: 1px solid rgba(197, 225, 221, 0.7);
+      margin-bottom: 6px;
+    }
+    .nav-drawer-title {
+      font-weight: 700;
+      color: var(--brand-dark);
+      font-size: 14px;
+    }
+    .nav-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(197, 225, 221, 0.95);
+      background: rgba(255,255,255,0.9);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      color: var(--text-sub);
+    }
+
+    .nav-drawer a {
+      display: block;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(197, 225, 221, 0.8);
+      background: rgba(255,255,255,0.86);
+      color: var(--brand-dark);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .nav-drawer a:active { transform: translateY(1px); }
+
+    .nav-drawer .nav-drawer-cta {
+      margin-top: 6px;
+      background: linear-gradient(120deg, #2f8f8f, #1f6f6f);
+      color: #fff;
+      border: none;
+      box-shadow: 0 12px 30px rgba(47, 143, 143, 0.25);
+    }
+
+    body.nav-open { overflow: hidden; }
+    body.nav-open .nav-overlay { opacity: 1; pointer-events: auto; }
+    body.nav-open .nav-drawer { transform: translateX(0); }
+
+
     main { flex: 1; }
 
     /* =========================
@@ -385,6 +489,7 @@
         white-space: normal;
       }
       .nav-links { display: none; }
+      .nav-toggle { display: inline-flex; }
 
       .top-hero { min-height: 72vh; padding: 44px 18px; }
       .top-hero-title { font-size: clamp(28px, 7vw, 40px); }
@@ -413,6 +518,12 @@
         <a href="#courses">コース</a>
         <a href="#contact">お問い合わせ</a>
       </nav>
+      <button class="nav-toggle" type="button"
+              aria-label="メニューを開く"
+              aria-controls="mobile-menu"
+              aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
 
@@ -566,5 +677,76 @@
     </div>
   </footer>
 </div>
+
+<script>
+(function () {
+  const body = document.body;
+  const toggle = document.querySelector('.nav-toggle');
+  const drawer = document.getElementById('mobile-menu');
+  const overlay = document.querySelector('.nav-overlay');
+  const closeBtns = document.querySelectorAll('[data-nav-close]');
+  const focusablesSelector = 'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])';
+
+  function openNav() {
+    body.classList.add('nav-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    drawer.setAttribute('aria-hidden', 'false');
+    // focus first link
+    const first = drawer.querySelector('a');
+    if (first) first.focus({preventScroll:true});
+  }
+
+  function closeNav() {
+    body.classList.remove('nav-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    drawer.setAttribute('aria-hidden', 'true');
+    toggle.focus({preventScroll:true});
+  }
+
+  function isOpen() {
+    return body.classList.contains('nav-open');
+  }
+
+  toggle && toggle.addEventListener('click', function () {
+    if (isOpen()) closeNav(); else openNav();
+  });
+
+  closeBtns.forEach(btn => btn.addEventListener('click', closeNav));
+  overlay && overlay.addEventListener('click', closeNav);
+
+  // close when clicking a link
+  drawer && drawer.addEventListener('click', function(e){
+    const a = e.target.closest('a');
+    if (a) closeNav();
+  });
+
+  // ESC to close
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) closeNav();
+  });
+
+  // basic focus trap when open
+  document.addEventListener('keydown', function (e) {
+    if (!isOpen() || e.key !== 'Tab') return;
+    const focusables = Array.from(drawer.querySelectorAll(focusablesSelector));
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  // If resized to desktop width, ensure closed
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 800 && isOpen()) closeNav();
+  });
+})();
+</script>
+
 </body>
 </html>
