@@ -446,7 +446,73 @@
 
     /* Scroll lock when drawer open */
     body.drawer-open { overflow: hidden; }
-  </style>
+  
+    /* =========================
+       Hero buttons: 2-row layout on small screens
+       ========================= */
+    @media (max-width: 620px) {
+      .hero-buttons{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        align-items: stretch;
+      }
+      .hero-buttons button{
+        width: 100%;
+      }
+    }
+    @media (max-width: 380px) {
+      .hero-buttons{
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+  
+    /* =========================
+       Instructor header (inside card)
+       ========================= */
+    .instructor-card{
+      padding-top: 20px;
+      margin-top: 18px; /* space from section lead */
+    }
+    .instructor-header{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .avatar-circle{
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-teal), #1f6f6f);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.16);
+      flex: 0 0 auto;
+    }
+    .avatar-name{
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--brand-dark);
+      line-height: 1.2;
+    }
+    /* show title inside card if present (we'll remove it anyway) */
+    .instructor-card .feature-title{
+      display: none;
+    }
+
+    /* Avoid double "Daisuke" label inside the card */
+    .instructor-card .feature-title{
+      display: none;
+    }
+</style>
 </head>
 <body>
 <div class="page">
@@ -460,6 +526,7 @@
       <nav class="nav-links" aria-label="メインメニュー">
         <a href="#about">D-Code Laboとは</a>
         <a href="#courses">コース</a>
+        <a href="#instructor">講師紹介</a>
         <a href="#contact">お問い合わせ</a>
       </nav>
 
@@ -480,6 +547,7 @@
     </div>
     <a href="#about" class="drawer-link">D-Code Laboとは</a>
     <a href="#courses" class="drawer-link">コース</a>
+    <a href="#instructor" class="drawer-link">講師紹介</a>
     <a href="#contact" class="drawer-link">お問い合わせ</a>
     <div class="drawer-note">※ タップで移動します</div>
   </aside>
@@ -506,6 +574,12 @@
           </button>
           <button class="btn-ghost" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
             仕組み（なぜ迷わない？）を見る
+          </button>
+          <button class="btn-ghost" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">
+            コース概要を見る
+          </button>
+          <button class="btn-ghost" onclick="document.getElementById('instructor').scrollIntoView({behavior:'smooth'})">
+            講師紹介を見る
           </button>
         </div>
       </div>
@@ -594,6 +668,47 @@
         </div>
       </div>
     </section>
+	<!-- INSTRUCTOR -->
+	<section id="instructor">
+  <div class="section-inner">
+    <h2 class="section-title">講師紹介</h2>
+    <p class="section-lead">
+      顔や肩書きではなく、考え方と設計で判断してもらえる場でありたいと考えています。
+    </p>
+
+    <div class="feature-card instructor-card" style="max-width:720px;">
+      <div class="instructor-header" aria-hidden="true">
+        <div class="avatar-circle">D</div>
+        <div class="avatar-name">Daisuke</div>
+      </div>
+
+      <p>
+        D-Code Labo では、「何を教えるか」よりも
+        <strong>どう整理し、どう迷わず学べるか</strong>を大切にしています。
+      </p>
+
+      <p>
+        プログラミング学習では、環境構築や手順でつまずき、
+        本質に入る前に疲れてしまうケースが少なくありません。
+      </p>
+
+      <p>
+        そうした遠回りを減らすため、D-Code Labo では学習環境・進行手順・教材構成を
+        あらかじめ設計した上で指導を行っています。
+      </p>
+
+      <p>
+        なお、不特定多数に向けた発信では顔写真や本名は公開していません。
+        面談や個別のやり取りでは、きちんとお話ししますのでご安心ください。
+      </p>
+
+      <p style="margin-bottom:0;">
+        無理に続けさせないこと、焦らせないことを前提に、
+        それぞれの目的とペースを大切にしています。
+      </p>
+    </div>
+  </div>
+</section>
 
     <!-- CONTACT / CTA -->
     <section id="contact">
